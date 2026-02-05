@@ -269,10 +269,11 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 3rem;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             animation: fadeInUp 0.8s ease both;
+            cursor: pointer;
         }
 
         .service-card:nth-child(1) { animation-delay: 0.1s; }
@@ -292,7 +293,7 @@
             background: var(--gradient-1);
             opacity: 0;
             transition: opacity 0.4s ease;
-            z-index: -1;
+            z-index: 0;
         }
 
         .service-card:hover::before {
@@ -305,10 +306,30 @@
             box-shadow: 0 20px 60px rgba(0, 255, 163, 0.2);
         }
 
+        .service-card.expanded {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .service-card.expanded::before {
+            opacity: 0.15;
+        }
+
+        .service-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
         .service-icon {
             font-size: 3rem;
             margin-bottom: 1.5rem;
             display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .service-card h3 {
@@ -317,11 +338,101 @@
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .service-card p {
+        .expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .service-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .service-card > p {
             color: rgba(245, 245, 247, 0.7);
             line-height: 1.7;
+        }
+
+        .service-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card.expanded .service-details {
+            max-height: 2000px;
+        }
+
+        .service-details-content {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .service-card.expanded .detail-section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card.expanded .detail-section:nth-child(1) { transition-delay: 0.1s; }
+        .service-card.expanded .detail-section:nth-child(2) { transition-delay: 0.2s; }
+        .service-card.expanded .detail-section:nth-child(3) { transition-delay: 0.3s; }
+
+        .detail-section h4 {
+            font-family: 'Syne', sans-serif;
+            color: var(--light);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-section li {
+            color: rgba(245, 245, 247, 0.7);
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .detail-section li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .technologies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .tech-badge {
+            background: rgba(0, 255, 163, 0.1);
+            border: 1px solid rgba(0, 255, 163, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
         }
 
         /* About Section */
@@ -533,6 +644,7 @@
             .cta-buttons { flex-direction: column; }
             .btn { width: 100%; text-align: center; }
             .footer-content { flex-direction: column; text-align: center; }
+            .service-card.expanded { grid-column: 1; }
         }
 
         /* Smooth Scroll */
@@ -592,40 +704,258 @@
         </div>
 
         <div class="services-grid">
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">🌐</span>
-                <h3>Web Development</h3>
+                <h3>Web Development <span class="expand-icon">⌄</span></h3>
                 <p>Custom, responsive websites built with modern technologies. From landing pages to complex web applications, we create digital experiences that convert.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>What We Build</h4>
+                            <ul>
+                                <li>Responsive Business Websites - Mobile-first designs that look stunning on every device</li>
+                                <li>E-Commerce Platforms - Full-featured online stores with payment integration and inventory management</li>
+                                <li>Custom Web Applications - Scalable solutions tailored to your unique business processes</li>
+                                <li>Landing Pages - High-converting pages optimized for marketing campaigns</li>
+                                <li>Progressive Web Apps - App-like experiences that work offline and load instantly</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Technologies We Use</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">HTML5/CSS3</span>
+                                <span class="tech-badge">JavaScript</span>
+                                <span class="tech-badge">React</span>
+                                <span class="tech-badge">Node.js</span>
+                                <span class="tech-badge">WordPress</span>
+                                <span class="tech-badge">PHP</span>
+                                <span class="tech-badge">MySQL</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Our Process</h4>
+                            <ul>
+                                <li>Discovery & Planning - Understanding your goals and target audience</li>
+                                <li>Design & Prototyping - Creating wireframes and visual mockups</li>
+                                <li>Development - Building with clean, maintainable code</li>
+                                <li>Testing & Launch - Ensuring everything works perfectly before going live</li>
+                                <li>Support & Maintenance - Ongoing updates and technical support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">📱</span>
-                <h3>Social Media Management</h3>
+                <h3>Social Media Management <span class="expand-icon">⌄</span></h3>
                 <p>Strategic social media handling that builds your brand presence, engages your audience, and drives meaningful interactions across all platforms.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>Our Services Include</h4>
+                            <ul>
+                                <li>Content Strategy - Developing engaging content calendars aligned with your brand voice</li>
+                                <li>Profile Optimization - Setting up and optimizing profiles across all major platforms</li>
+                                <li>Daily Management - Regular posting, monitoring, and community engagement</li>
+                                <li>Influencer Partnerships - Connecting you with relevant influencers in your industry</li>
+                                <li>Analytics & Reporting - Monthly performance reports with actionable insights</li>
+                                <li>Crisis Management - Protecting your brand reputation with quick response strategies</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Platforms We Manage</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">Facebook</span>
+                                <span class="tech-badge">Instagram</span>
+                                <span class="tech-badge">LinkedIn</span>
+                                <span class="tech-badge">Twitter/X</span>
+                                <span class="tech-badge">TikTok</span>
+                                <span class="tech-badge">YouTube</span>
+                                <span class="tech-badge">Pinterest</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>What You Get</h4>
+                            <ul>
+                                <li>Increased brand awareness and follower growth</li>
+                                <li>Higher engagement rates and community building</li>
+                                <li>Professional content creation including graphics and videos</li>
+                                <li>Consistent posting schedule to keep your audience engaged</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">📊</span>
-                <h3>Digital Marketing</h3>
+                <h3>Digital Marketing <span class="expand-icon">⌄</span></h3>
                 <p>Data-driven marketing campaigns that maximize ROI. SEO, PPC, content marketing, and analytics—all optimized for your business goals.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>Marketing Services</h4>
+                            <ul>
+                                <li>Search Engine Optimization (SEO) - Boost organic rankings and drive targeted traffic</li>
+                                <li>Pay-Per-Click Advertising (PPC) - Google Ads, Facebook Ads, and more</li>
+                                <li>Content Marketing - Blog posts, videos, and infographics that engage and convert</li>
+                                <li>Email Marketing - Automated campaigns that nurture leads and drive sales</li>
+                                <li>Conversion Rate Optimization - A/B testing and optimization for better results</li>
+                                <li>Marketing Automation - Streamline workflows and personalize customer journeys</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Tools & Platforms</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">Google Analytics</span>
+                                <span class="tech-badge">Google Ads</span>
+                                <span class="tech-badge">SEMrush</span>
+                                <span class="tech-badge">Mailchimp</span>
+                                <span class="tech-badge">HubSpot</span>
+                                <span class="tech-badge">Facebook Ads Manager</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Results You Can Expect</h4>
+                            <ul>
+                                <li>Increased website traffic from targeted audiences</li>
+                                <li>Higher conversion rates and lead generation</li>
+                                <li>Better ROI on marketing spend with data-driven decisions</li>
+                                <li>Comprehensive analytics and transparent reporting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">🎨</span>
-                <h3>Brand Design</h3>
+                <h3>Brand Design <span class="expand-icon">⌄</span></h3>
                 <p>Compelling visual identities that make your brand unforgettable. Logo design, brand guidelines, and creative assets that tell your story.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>Design Services</h4>
+                            <ul>
+                                <li>Logo Design - Unique, memorable logos that represent your brand essence</li>
+                                <li>Brand Identity - Complete visual systems including colors, typography, and imagery</li>
+                                <li>Marketing Collateral - Business cards, brochures, flyers, and presentations</li>
+                                <li>Packaging Design - Eye-catching product packaging that stands out on shelves</li>
+                                <li>Social Media Graphics - Custom templates and on-brand visual content</li>
+                                <li>Brand Guidelines - Comprehensive documentation for consistent brand application</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Design Tools</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">Adobe Photoshop</span>
+                                <span class="tech-badge">Adobe Illustrator</span>
+                                <span class="tech-badge">Figma</span>
+                                <span class="tech-badge">Adobe XD</span>
+                                <span class="tech-badge">InDesign</span>
+                                <span class="tech-badge">Canva Pro</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Our Approach</h4>
+                            <ul>
+                                <li>Brand Discovery - Deep dive into your values, mission, and target audience</li>
+                                <li>Concept Development - Multiple creative directions to choose from</li>
+                                <li>Refinement - Collaborative process to perfect your brand identity</li>
+                                <li>Delivery - All source files and brand guidelines for future use</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">☁️</span>
-                <h3>Cloud Solutions</h3>
+                <h3>Cloud Solutions <span class="expand-icon">⌄</span></h3>
                 <p>Scalable cloud infrastructure and migration services. We help you leverage cloud technology for improved efficiency and reduced costs.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>Cloud Services</h4>
+                            <ul>
+                                <li>Cloud Migration - Seamless transition of your applications and data to the cloud</li>
+                                <li>Infrastructure Setup - Building scalable, secure cloud environments</li>
+                                <li>Cloud Storage Solutions - Secure, accessible file storage and backup systems</li>
+                                <li>Disaster Recovery - Automated backup and recovery solutions to protect your data</li>
+                                <li>Cloud Optimization - Cost reduction and performance enhancement</li>
+                                <li>Managed Services - 24/7 monitoring, maintenance, and support</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Cloud Platforms</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">AWS</span>
+                                <span class="tech-badge">Microsoft Azure</span>
+                                <span class="tech-badge">Google Cloud</span>
+                                <span class="tech-badge">DigitalOcean</span>
+                                <span class="tech-badge">Heroku</span>
+                                <span class="tech-badge">Cloudflare</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Benefits</h4>
+                            <ul>
+                                <li>Scalability - Grow your infrastructure as your business expands</li>
+                                <li>Cost Efficiency - Pay only for what you use, reduce hardware costs</li>
+                                <li>Reliability - 99.9% uptime with enterprise-grade infrastructure</li>
+                                <li>Security - Industry-leading security protocols and compliance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="service-card">
+            <div class="service-card" onclick="toggleService(this)">
                 <span class="service-icon">🔧</span>
-                <h3>IT Consulting</h3>
+                <h3>IT Consulting <span class="expand-icon">⌄</span></h3>
                 <p>Expert technology consulting to guide your digital transformation. Strategic planning, system architecture, and technical advisory services.</p>
+                
+                <div class="service-details">
+                    <div class="service-details-content">
+                        <div class="detail-section">
+                            <h4>Consulting Services</h4>
+                            <ul>
+                                <li>Technology Strategy - Aligning IT with your business objectives</li>
+                                <li>System Architecture - Designing scalable, maintainable technical solutions</li>
+                                <li>Digital Transformation - Modernizing legacy systems and processes</li>
+                                <li>Security Audits - Identifying vulnerabilities and implementing safeguards</li>
+                                <li>Process Optimization - Streamlining workflows with technology</li>
+                                <li>Vendor Selection - Helping you choose the right tools and partners</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Areas of Expertise</h4>
+                            <div class="technologies">
+                                <span class="tech-badge">Software Development</span>
+                                <span class="tech-badge">Cybersecurity</span>
+                                <span class="tech-badge">DevOps</span>
+                                <span class="tech-badge">Data Analytics</span>
+                                <span class="tech-badge">AI & Automation</span>
+                                <span class="tech-badge">Enterprise Architecture</span>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <h4>Why Choose Us</h4>
+                            <ul>
+                                <li>Years of industry experience across multiple sectors</li>
+                                <li>Vendor-neutral advice focused on your best interests</li>
+                                <li>Practical, actionable recommendations</li>
+                                <li>Ongoing support throughout implementation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -715,12 +1045,51 @@
     </footer>
 
     <script>
-        // Cursor Glow Effect
+        // Toggle Service Details
+        function toggleService(card) {
+            const allCards = document.querySelectorAll('.service-card');
+            const isExpanded = card.classList.contains('expanded');
+            
+            // Close all other cards
+            allCards.forEach(c => {
+                if (c !== card) {
+                    c.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current card
+            if (isExpanded) {
+                card.classList.remove('expanded');
+            } else {
+                card.classList.add('expanded');
+                // Smooth scroll to card
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
+            }
+        }
+
+        // Cursor Glow Effect - Optimized
         const cursorGlow = document.querySelector('.cursor-glow');
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+        
         document.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
+            mouseX = e.clientX;
+            mouseY = e.clientY;
         });
+        
+        // Smooth cursor glow animation using requestAnimationFrame
+        function animateCursor() {
+            glowX += (mouseX - glowX) * 0.1;
+            glowY += (mouseY - glowY) * 0.1;
+            
+            cursorGlow.style.left = glowX + 'px';
+            cursorGlow.style.top = glowY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
 
         // Smooth scroll for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -736,25 +1105,114 @@
             });
         });
 
-        // Intersection Observer for animations
+        // Parallax effect for hero section - Optimized
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const hero = document.querySelector('.hero-content');
+                    
+                    if (hero && scrolled < window.innerHeight) {
+                        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                        hero.style.opacity = 1 - (scrolled / window.innerHeight) * 0.8;
+                    }
+                    
+                    ticking = false;
+                });
+                
+                ticking = true;
+            }
+        });
+
+        // Intersection Observer for fade-in animations
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            rootMargin: '0px 0px -100px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        const fadeInObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
+                    fadeInObserver.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        // Observe service cards
-        document.querySelectorAll('.service-card').forEach(card => {
-            observer.observe(card);
+        // Observe elements
+        document.querySelectorAll('.service-card, .stat-item, .section-header').forEach(el => {
+            fadeInObserver.observe(el);
         });
+
+        // Number counter animation for stats
+        const countUp = (element, target, duration = 2000) => {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + (element.textContent.includes('%') ? '%' : '+');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (element.textContent.includes('%') ? '%' : '+');
+                }
+            }, 16);
+        };
+
+        // Stats counter observer
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const number = entry.target;
+                    const text = number.textContent;
+                    const value = parseInt(text);
+                    
+                    if (!number.dataset.counted) {
+                        countUp(number, value);
+                        number.dataset.counted = 'true';
+                    }
+                    
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(stat => {
+            statsObserver.observe(stat);
+        });
+
+        // Add stagger animation to tech badges when service expands
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', () => {
+                if (card.classList.contains('expanded')) {
+                    const badges = card.querySelectorAll('.tech-badge');
+                    badges.forEach((badge, index) => {
+                        badge.style.animation = `fadeInUp 0.4s ease ${index * 0.05}s both`;
+                    });
+                }
+            });
+        });
+
+        // Optimize animations with will-change
+        const optimizeAnimations = () => {
+            document.querySelectorAll('.service-card, .visual-box').forEach(el => {
+                el.style.willChange = 'transform, opacity';
+            });
+        };
+        
+        window.addEventListener('load', optimizeAnimations);
+
+        // Remove will-change after animations complete to save resources
+        setTimeout(() => {
+            document.querySelectorAll('[style*="will-change"]').forEach(el => {
+                el.style.willChange = 'auto';
+            });
+        }, 3000);
     </script>
 </body>
 </html>
